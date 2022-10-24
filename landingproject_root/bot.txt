@@ -1,0 +1,5 @@
+t.me/MyBotLerningSavel_bot
+
+1851566906:AAGYeSKQNO3ld833wYz9LvTauuesTPBZUEs
+
+https://api.telegram.org/bot1851566906:AAGYeSKQNO3ld833wYz9LvTauuesTPBZUEs/sendMessage?chat_id=-574873161&text=тест
