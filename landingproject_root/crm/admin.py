@@ -1,13 +1,13 @@
 from django.contrib import admin
-from .models import Order, StatusCrm, ComentCrm
+from .models import Order, StatusCrm, CommentCrm
 
 
 # Register your models here.
-class Coment(admin.StackedInline):
+class Comment(admin.StackedInline):
     # Модель, поля которой будут объединены с выбранной админ-панелью
-    model = ComentCrm
-    fields = ('coment_dt', 'coment_text')
-    readonly_fields = ('coment_dt',)
+    model = CommentCrm
+    fields = ('comment_dt', 'comment_text')
+    readonly_fields = ('comment_dt',)
     # Количество блоков (элементов) модели, которые отображаются для выбранного элемента админ-панели
     extra = 1
 
@@ -32,10 +32,10 @@ class OrderAdm(admin.ModelAdmin):
     fields = ('id', 'order_status', 'order_dt', 'order_name', 'order_phone')
     # Поля только для чтения, которые отображаются при редактировании
     readonly_fields = ('id', 'order_dt')
-    # Поле класса Coment
-    inlines = [Coment, ]
+    # Поле класса Comment
+    inlines = [Comment, ]
 
 
 admin.site.register(Order, OrderAdm)
 admin.site.register(StatusCrm)
-admin.site.register(ComentCrm)
+admin.site.register(CommentCrm)

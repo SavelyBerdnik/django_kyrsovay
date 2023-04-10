@@ -1,11 +1,14 @@
 from django.shortcuts import render
-from .models import Order
+from .models import Order, CommentCrm
 from .forms import OrderForm
 from price.models import PriceCard, PriceTable
 from telebot.sendmessage import sendTelegram
-
+from rest_framework import generics
 
 # Create your views here.
+from .serializers import OrderSerializer, CommentCrmSerializer
+
+
 def first_page(request):
     pc_1 = PriceCard.objects.get(pk=1)
     pc_2 = PriceCard.objects.get(pk=2)
@@ -32,3 +35,13 @@ def thanks_page(request):
         return render(request, './thanks.html', {'name': name})
     else:
         return render(request, './thanks.html')
+
+
+class OrdersAPIView(generics.ListAPIView):
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+
+
+class CommentCrmAPIView(generics.ListAPIView):
+    queryset = CommentCrm.objects.all()
+    serializer_class = CommentCrmSerializer
