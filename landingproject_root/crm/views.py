@@ -1,9 +1,17 @@
+from datetime import date, datetime
+
+from django.core.paginator import Paginator
+from django.db.models import Q
 from django.shortcuts import render
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
 from .models import Order, CommentCrm
 from .forms import OrderForm
 from price.models import PriceCard, PriceTable
 from telebot.sendmessage import sendTelegram
-from rest_framework import generics
+from rest_framework import generics, viewsets, filters
 
 # Create your views here.
 from .serializers import OrderSerializer, CommentCrmSerializer
@@ -37,11 +45,40 @@ def thanks_page(request):
         return render(request, './thanks.html')
 
 
+# class OrdersAPIView(APIView):
+#     def get(self, request):
+#         return Response({'title': 'Статус'})
+
+
 class OrdersAPIView(generics.ListAPIView):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
 
 
+class OrdersViewSet(viewsets.ModelViewSet):
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+
+    @action(methods=["POST"], detail=True)
+    def delete_order(self, request, id):
+        try:
+            Order.objects.get(Q(id=id)).delete()
+            return Response({'message': 'success'})
+        except Exception:
+            return Response({'message': 'error'})
+
+    @action(methods=['GET'], detail=True)
+    def same_orders(self, request, pk):
+        queryset = Order.objects.get(Q(id=pk))
+        order_status = queryset.order_status
+        order_name = queryset.order_dt
+        same_orders = Order.objects.filter(Q(order_name=order_name) & Q(order_status=order_status))
+        serializer = self.get_serializer(same_orders, many=True)
+        return Response(serializer.data)
+
+
 class CommentCrmAPIView(generics.ListAPIView):
     queryset = CommentCrm.objects.all()
     serializer_class = CommentCrmSerializer
+    filter_backends = [filters.OrderingFilter]
+    ordering_fields = ['comment_dt']

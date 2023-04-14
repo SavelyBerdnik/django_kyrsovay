@@ -20,16 +20,20 @@ from django.conf import settings
 from django.conf.urls.static import static
 from rest_framework import routers, serializers, viewsets
 
-from crm.views import OrdersAPIView, CommentCrmAPIView
-from price.views import PriceTableAPIView, PriceCardAPIView
+from crm.views import OrdersAPIView, CommentCrmAPIView, OrdersViewSet
+from price.views import PriceTableAPIView, PriceCardAPIView, PriceTableViewSet
+
+router = routers.SimpleRouter()
+router.register('prices', PriceTableViewSet, basename='price')
+router.register('orders', OrdersViewSet, basename='order')
+# router.register(r'comment', CommentCrmAPIView)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.first_page),
     path('api-auth/', include('rest_framework.urls')),
-    path('api/v1/orderList/', OrdersAPIView.as_view()),
-    path('api/v1/commentList/', CommentCrmAPIView.as_view()),
-    path('api/v1/priceTableList/', PriceTableAPIView.as_view()),
+    # path('api/v1/priceTableList/', PriceTableAPIView.as_view()),
     path('api/v1/priceCardList/', PriceCardAPIView.as_view()),
+    path('api/', include(router.urls)),
     path('thanks/', views.thanks_page, name='thanks_page')
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
